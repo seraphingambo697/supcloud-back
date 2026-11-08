@@ -1,0 +1,33 @@
+
+# framework
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+
+# Auth 
+python-jose[cryptography]==3.3.0   
+passlib==1.7.4
+bcrypt==4.0.1          
+python-multipart==0.0.9            
+
+# Base de données
+sqlalchemy==2.0.30
+alembic==1.13.1
+asyncpg==0.29.0                    
+psycopg2-binary==2.9.9            
+
+# Validation
+pydantic==2.7.1
+pydantic-settings==2.2.1
+email-validator==2.1.1
+
+# HTTP client 
+httpx==0.27.0
+
+# Fichiers 
+python-magic==0.4.27
+aiofiles==23.2.1
+
+# Utilitaires
+python-dotenv==1.0.1
+uuid==1.30
+Pillow==10.3.0                     

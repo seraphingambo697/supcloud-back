@@ -1,6 +1,5 @@
-# services/auth/main.py
 """
-Point d'entrée 
+Entrypoint du service Auth.
 """
 
 from fastapi import FastAPI

@@ -1,3 +1,129 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        @apply bg-dark-bg text-dark-text antialiased;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-dark-variant rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-dark-border;
+    }
+
+    ::selection {
+        @apply bg-primary/30 text-white;
+    }
+}
+
+@layer components {
+
+    /* Carte surface */
+    .card {
+        @apply bg-dark-surface rounded-2xl border border-dark-border/50;
+    }
+
+    /* Bouton primaire */
+    .btn-primary {
+        @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm transition-all hover:bg-primary-dark active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-dark-variant text-dark-text font-semibold text-sm transition-all hover:bg-dark-border active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-danger/10 text-danger font-semibold text-sm transition-all hover:bg-danger/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-ghost {
+        @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl text-dark-muted text-sm transition-all hover:bg-dark-variant hover:text-dark-text active:scale-95;
+    }
+
+    .btn-icon {
+        @apply inline-flex items-center justify-center w-9 h-9 rounded-xl text-dark-muted transition-all hover:bg-dark-variant hover:text-dark-text active:scale-90;
+    }
+
+    /* Inputs */
+    .input {
+        @apply w-full px-4 py-3 rounded-xl bg-dark-variant border border-transparent text-dark-text placeholder-dark-muted text-sm outline-none focus:border-primary transition-colors;
+    }
+
+    /* Badges  */
+    .badge {
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+
+    /* Menu item */
+    .menu-item {
+        @apply flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-dark-muted cursor-pointer transition-all hover:bg-dark-variant hover:text-dark-text;
+    }
+
+    .menu-item.active {
+        @apply bg-primary/15 text-primary font-medium;
+    }
+
+    /* ── Skeleton loader */
+    .skeleton {
+        @apply bg-dark-variant rounded-xl animate-pulse;
+    }
+}
+
+/* Animations personnalisées */
+.animate-fade-in {
+    animation: fadeIn 0.2s ease-out both;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.25s ease-out both;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Overlay modal */
+.modal-overlay {
+    @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+/* Toast overrides */
+.react-hot-toast {
+    font-family: 'Inter', sans-serif !important;
+}

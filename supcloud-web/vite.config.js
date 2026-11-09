@@ -6,6 +6,8 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
+      // Auth et fichiers Gateway FastAPI
+      '/auth': { target: 'http://localhost:8000', changeOrigin: true },
     },
   },
   build: {

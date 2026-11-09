@@ -1,5 +1,6 @@
-
 // Injecte automatiquement le JWT sur chaque requête.
+
+
 import axios from 'axios'
 
 const BASE_URL = import.meta.env.VITE_API_URL || ''
@@ -9,36 +10,34 @@ export const api = axios.create({
   timeout: 30_000,
 })
 
-
-
-// Add Authorization 
+// ── Intercepteur requête 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('supcloud_token')
+  const token = localStorage.getItem('supfile_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
 })
 
-// reponse interceptor to handle 401 errors
+//Intercepteur réponse : 
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('supcloud_token')
+      localStorage.removeItem('supfile_token')
       window.location.href = '/login'
     }
     return Promise.reject(err)
   }
 )
 
-// Helpers 
+//Helpers 
 
 /** Extrait le message d'erreur du backend */
 export const getErrorMessage = (err) =>
   err?.response?.data?.detail || err?.message || 'Une erreur est survenue'
 
-/** Retourne l'URL de streaming/download d'un fichier */
+/** Retourne l'URL de streaming/download  */
 export const fileUrl = (id) => `${BASE_URL}/files/${id}/download`
 export const streamUrl = (id) => `${BASE_URL}/files/${id}/stream`
 export const thumbUrl = (id) => `${BASE_URL}/files/${id}/thumbnail`

@@ -1,0 +1,145 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: supcloud_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: supcloud
+      POSTGRES_USER: supcloud_user
+      POSTGRES_PASSWORD: supcloud_pass
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U supcloud_user -d supcloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Migrations Alembic 
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate   # ← Dockerfile dédié avec alembic
+    container_name: supcloud_migrate
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://supcloud_user:supcloud_pass@db:5432/supcloud
+      DATABASE_URL_SYNC: postgresql://supcloud_user:supcloud_pass@db:5432/supcloud
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  # Auth Service 
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    container_name: supcloud_auth
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://supcloud_user:supcloud_pass@db:5432/supcloud
+      DATABASE_URL_SYNC: postgresql://supcloud_user:supcloud_pass@db:5432/supcloud  
+      JWT_SECRET: ${JWT_SECRET:-devsecretchangeme}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost,http://localhost:3000}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8001/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Files Service 
+  files:
+    build:
+      context: .
+      dockerfile: services/files/Dockerfile
+    container_name: supcloud_files
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://supcloud_user:supcloud_pass@db:5432/supcloud
+      DATABASE_URL_SYNC: postgresql://supcloud_user:supcloud_pass@db:5432/supcloud  
+      STORAGE_PATH: /app/storage
+      JWT_SECRET: ${JWT_SECRET:-devsecretchangeme}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost,http://localhost:3000}
+    volumes:
+      - file_storage:/app/storage
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8002:8002"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8002/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Shares Service 
+  shares:
+    build:
+      context: .
+      dockerfile: services/shares/Dockerfile
+    container_name: supcloud_shares
+    restart: unless-stopped
+    environment:
+      FRONTEND_URL: "http://localhost:3000"  
+      DATABASE_URL: postgresql+asyncpg://supcloud_user:supcloud_pass@db:5432/supcloud
+      DATABASE_URL_SYNC: postgresql://supcloud_user:supcloud_pass@db:5432/supcloud  
+      JWT_SECRET: ${JWT_SECRET:-devsecretchangeme}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost,http://localhost:3000}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8003:8003"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8003/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # API Gateway 
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    container_name: supcloud_gateway  
+    restart: unless-stopped
+    environment:
+      AUTH_SERVICE_URL: http://auth:8001
+      FILES_SERVICE_URL: http://files:8002
+      SHARES_SERVICE_URL: http://shares:8003
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost,http://localhost:3000}
+      JWT_SECRET: ${JWT_SECRET:-devsecretchangeme}
+    depends_on:
+      auth:
+        condition: service_healthy
+      files:
+        condition: service_healthy
+      shares:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+volumes:
+  db_data:
+    driver: local
+  file_storage:
+    driver: local

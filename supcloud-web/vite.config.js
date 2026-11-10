@@ -9,6 +9,8 @@ export default defineConfig({
       // Auth et fichiers Gateway FastAPI
       '/auth': { target: 'http://localhost:8000', changeOrigin: true },
       '/files': { target: 'http://localhost:8000', changeOrigin: true },
+      '/share/resolve': { target: 'http://localhost:8000', changeOrigin: true },
+      '/share/links': { target: 'http://localhost:8000', changeOrigin: true },
     },
   },
   build: {

@@ -13,6 +13,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
           <Route element={<AppLayout />}>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/files" element={<FilesPage />} />
           </Route>
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

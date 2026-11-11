@@ -22,6 +22,8 @@ from shared.schemas.schemas import (
 from shared.utils.jwt_utils import get_current_user_id
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
+import logging
+logger = logging.getLogger("auth")
 
 
 def _svc(db: AsyncSession = Depends(get_db)) -> AuthService:
@@ -107,7 +109,9 @@ async def oauth_google_callback(
             name=profile["name"],
             avatar_url=profile.get("avatar_url"),
         )
-    except Exception:
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        logger.exception(f"Échec du callback Google: {e}")
         return RedirectResponse(url=f"{front}/login?error=google")
 
     return RedirectResponse(url=f"{front}/oauth/callback#token={token}")

@@ -24,7 +24,7 @@ services:
   migrate:
     build:
       context: .
-      dockerfile: Dockerfile.migrate   # ← Dockerfile dédié avec alembic
+      dockerfile: Dockerfile.migrate   
     container_name: supcloud_migrate
     command: ["alembic", "upgrade", "head"]
     environment:

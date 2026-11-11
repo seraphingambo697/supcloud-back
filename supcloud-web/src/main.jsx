@@ -19,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/files" element={<FilesPage />} />
+            <Route path="/trash" element={<TrashPage />} />
 
             <Route path="/shares" element={<SharesPage />} />
           </Route>
@@ -27,6 +28,20 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
         </Routes>
       </BrowserRouter>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: '#1C1C1E',
+            color: '#EBEBF5',
+            border: '1px solid #2C2C2E',
+            borderRadius: '12px',
+            fontSize: '14px',
+          },
+          success: { iconTheme: { primary: '#30D158', secondary: '#1C1C1E' } },
+          error: { iconTheme: { primary: '#FF453A', secondary: '#1C1C1E' } },
+        }}
+      />
     </AuthProvider>
   </React.StrictMode>
 )

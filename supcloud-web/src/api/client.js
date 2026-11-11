@@ -12,7 +12,7 @@ export const api = axios.create({
 
 // ── Intercepteur requête 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('supfile_token')
+  const token = localStorage.getItem('supcloud_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -24,7 +24,7 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('supfile_token')
+      localStorage.removeItem('supcloud_token')
       window.location.href = '/login'
     }
     return Promise.reject(err)

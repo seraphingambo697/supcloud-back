@@ -12,30 +12,30 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
     useEffect(() => {
-        const token = localStorage.getItem('supfile_token')
+        const token = localStorage.getItem('supcloud_token')
         if (!token) { setLoading(false); return }
         authApi.me()
             .then((res) => setUser(res.data))
-            .catch(() => localStorage.removeItem('supfile_token'))
+            .catch(() => localStorage.removeItem('supcloud_token'))
             .finally(() => setLoading(false))
     }, [])
 
     const login = useCallback(async (email, password) => {
         const res = await authApi.login(email, password)
-        localStorage.setItem('supfile_token', res.data.access_token)
+        localStorage.setItem('supcloud_token', res.data.access_token)
         setUser(res.data.user)
         return res.data.user
     }, [])
 
     const register = useCallback(async (name, email, password) => {
         const res = await authApi.register(name, email, password)
-        localStorage.setItem('supfile_token', res.data.access_token)
+        localStorage.setItem('supcloud_token', res.data.access_token)
         setUser(res.data.user)
         return res.data.user
     }, [])
 
     const logout = useCallback(() => {
-        localStorage.removeItem('supfile_token')
+        localStorage.removeItem('supcloud_token')
         setUser(null)
     }, [])
 

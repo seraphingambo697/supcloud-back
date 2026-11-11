@@ -1,7 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
+
+import './index.css'
+
+import { AuthProvider } from './contexts/AuthContext'
+import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import DashboardPage from './pages/DashboardPage'
+import FilesPage from './pages/FilesPage'
+import SearchPage from './pages/SearchPage'
+import TrashPage from './pages/TrashPage'
+import SharesPage from './pages/SharesPage'
+import SettingsPage from './pages/SettingsPage'
+import PublicSharePage from './pages/PublicSharePage'
+import OAuthCallbackPage from './pages/OAuthCallbackPage';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -10,7 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
+          <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
           <Route path="/share/:token" element={<PublicSharePage />} />
 
           <Route element={<AppLayout />}>

@@ -11,6 +11,8 @@ export default defineConfig({
       '/files': { target: 'http://localhost:8000', changeOrigin: true },
       '/share/resolve': { target: 'http://localhost:8000', changeOrigin: true },
       '/share/links': { target: 'http://localhost:8000', changeOrigin: true },
+      '/share/internal': { target: 'http://localhost:8000', changeOrigin: true },
+      '/share/with-me': { target: 'http://localhost:8000', changeOrigin: true },
     },
   },
   build: {

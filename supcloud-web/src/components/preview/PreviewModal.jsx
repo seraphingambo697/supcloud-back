@@ -1,28 +1,46 @@
-// Visionneuse universelle intégrée dans une modal.
-// Affiche : images, vidéos (streaming), audio, PDF (iframe), texte, Office téléchargement.
 
 import { useState, useEffect } from 'react'
-import { X, Download, Share2, Info, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
+import { X, Download, Info, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
 import { filesApi } from '../../api/files'
-import { fileUrl, streamUrl } from '../../api/client'
 import { formatBytes, fmtDate, categoryName, downloadBlob, isImage, isVideo, isAudio, isPdf, isText } from '../../utils'
 import { FileIcon, Spinner } from '../ui'
 import toast from 'react-hot-toast'
 
 export default function PreviewModal({ file, onClose }) {
   const [textContent, setTextContent] = useState(null)
+  const [blobUrl, setBlobUrl] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
   const [imgZoom, setImgZoom] = useState(1)
 
-  // Charge le contenu texte si nécessaire
   useEffect(() => {
+    let url = null
+    let cancelled = false
+    setBlobUrl(null)
+    setTextContent(null)
+
     if (isText(file)) {
       setLoading(true)
       filesApi.downloadText(file.id)
-        .then(res => setTextContent(res.data))
+        .then(res => { if (!cancelled) setTextContent(res.data) })
         .catch(() => toast.error('Impossible de charger le fichier'))
-        .finally(() => setLoading(false))
+        .finally(() => { if (!cancelled) setLoading(false) })
+    } else if (isImage(file) || isVideo(file) || isAudio(file) || isPdf(file)) {
+      setLoading(true)
+      filesApi.downloadFile(file.id)
+        .then(res => {
+          if (cancelled) return
+          const blob = new Blob([res.data], { type: file.mime_type || res.data.type })
+          url = URL.createObjectURL(blob)
+          setBlobUrl(url)
+        })
+        .catch(() => toast.error("Impossible d'ouvrir le fichier"))
+        .finally(() => { if (!cancelled) setLoading(false) })
+    }
+
+    return () => {
+      cancelled = true
+      if (url) URL.revokeObjectURL(url)
     }
   }, [file])
 
@@ -40,8 +58,6 @@ export default function PreviewModal({ file, onClose }) {
       toast.success(`"${file.name}" téléchargé`)
     } catch { toast.error('Erreur téléchargement') }
   }
-
-  const token = localStorage.getItem('supcloud_token')
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur animate-fade-in">
@@ -76,23 +92,26 @@ export default function PreviewModal({ file, onClose }) {
             <Spinner size="lg" />
           ) : isImage(file) ? (
             <div className="overflow-auto w-full h-full flex items-center justify-center p-4">
-              <img
-                src={`${fileUrl(file.id)}${token ? `?token=${token}` : ''}`}
-                alt={file.name}
-                style={{ transform: `scale(${imgZoom})`, transformOrigin: 'center', transition: 'transform 0.2s', maxWidth: '100%', maxHeight: '100%' }}
-                className="rounded-lg shadow-2xl object-contain"
-                onError={e => { e.target.src = file.thumbnail_url || '' }}
-              />
+              {blobUrl && (
+                <img
+                  src={blobUrl}
+                  alt={file.name}
+                  style={{ transform: `scale(${imgZoom})`, transformOrigin: 'center', transition: 'transform 0.2s', maxWidth: '100%', maxHeight: '100%' }}
+                  className="rounded-lg shadow-2xl object-contain"
+                />
+              )}
             </div>
           ) : isVideo(file) ? (
-            <video
-              src={streamUrl(file.id)}
-              controls autoPlay
-              className="max-w-full max-h-full"
-              style={{ outline: 'none' }}
-            >
-              Votre navigateur ne supporte pas la lecture vidéo.
-            </video>
+            blobUrl && (
+              <video
+                src={blobUrl}
+                controls autoPlay
+                className="max-w-full max-h-full"
+                style={{ outline: 'none' }}
+              >
+                Votre navigateur ne supporte pas la lecture vidéo.
+              </video>
+            )
           ) : isAudio(file) ? (
             <div className="flex flex-col items-center gap-6 p-8">
               <div className="w-32 h-32 rounded-3xl bg-warning/15 flex items-center justify-center">
@@ -100,20 +119,20 @@ export default function PreviewModal({ file, onClose }) {
               </div>
               <p className="font-semibold text-lg text-center">{file.name}</p>
               {file.size_bytes && <p className="text-dark-muted text-sm">{formatBytes(file.size_bytes)}</p>}
-              <audio
-                src={streamUrl(file.id)}
-                controls autoPlay
-                className="w-80"
-              >
-                Votre navigateur ne supporte pas la lecture audio.
-              </audio>
+              {blobUrl && (
+                <audio src={blobUrl} controls autoPlay className="w-80">
+                  Votre navigateur ne supporte pas la lecture audio.
+                </audio>
+              )}
             </div>
           ) : isPdf(file) ? (
-            <iframe
-              src={`${fileUrl(file.id)}#toolbar=1`}
-              title={file.name}
-              className="w-full h-full border-0"
-            />
+            blobUrl && (
+              <iframe
+                src={blobUrl}
+                title={file.name}
+                className="w-full h-full border-0"
+              />
+            )
           ) : isText(file) ? (
             <div className="w-full h-full overflow-auto p-6">
               <div className="max-w-4xl mx-auto">

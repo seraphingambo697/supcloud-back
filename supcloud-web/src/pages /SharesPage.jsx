@@ -106,7 +106,7 @@ export default function SharesPage() {
                       {link.expires_at && (
                         <span className="flex items-center gap-1">
                           <Calendar size={10} />
-                          {link.is_expired ? '⚠️ Expiré' : `Expire ${timeAgo(link.expires_at)}`}
+                          {link.is_expired ? 'Expiré' : `Expire ${timeAgo(link.expires_at)}`}
                         </span>
                       )}
                       <span>{link.download_count ?? 0} téléchargement{(link.download_count ?? 0) > 1 ? 's' : ''}</span>

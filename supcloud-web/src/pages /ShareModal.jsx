@@ -209,7 +209,7 @@ export default function ShareModal({ file, onClose }) {
         </div>
       )}
 
-      {/* ── Partage interne ────────────────────────────────────────────────── */}
+      {/* partage interne */}
       {tab === 'internal' && (
         <div className="space-y-4">
           <div className="p-3 bg-primary/10 rounded-xl text-sm text-primary">

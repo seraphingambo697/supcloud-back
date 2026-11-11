@@ -1,4 +1,3 @@
-// Gestionnaire de fichiers complet :
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
@@ -13,6 +12,7 @@ import { formatBytes, timeAgo, downloadBlob, isFolder, categoryName } from '../u
 import { FileIcon, Modal, ConfirmDialog, EmptyState, Spinner } from '../components/ui'
 import PreviewModal from '../components/preview/PreviewModal'
 import ShareModal from '../components/share/ShareModal'
+import AuthThumbnail from '../components/AuthThumbnail'
 import toast from 'react-hot-toast'
 
 export default function FilesPage() {
@@ -326,8 +326,8 @@ function GridView({ items, selected, onToggle, onClick, onContext }) {
           >
             {/* Thumbnail ou icône */}
             <div className="relative mb-2">
-              {item.category === 'image' && item.thumbnail_url ? (
-                <img src={item.thumbnail_url} alt={item.name} className="w-full h-24 object-cover rounded-xl" />
+              {item.category === 'image' ? (
+                <AuthThumbnail item={item} className="w-full h-24 object-cover rounded-xl" />
               ) : (
                 <div className="flex justify-center py-3">
                   <FileIcon file={item} size={48} />

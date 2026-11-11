@@ -6,6 +6,7 @@ import { getErrorMessage } from '../api/client'
 import { formatBytes } from '../utils'
 import { ProgressBar, Spinner } from '../components/ui'
 import toast from 'react-hot-toast'
+import { useTheme } from '../contexts/ThemeContext'
 
 export default function SettingsPage() {
   const { user, updateUser } = useAuth()
@@ -176,6 +177,8 @@ function SecurityTab() {
 
 function AppearanceTab() {
   const [isDark, setIsDark] = useState(true)
+  const { mode, setMode } = useTheme()
+
 
   const toggle = (dark) => {
     setIsDark(dark)
@@ -187,22 +190,15 @@ function AppearanceTab() {
     <div className="card p-6">
       <h2 className="font-semibold mb-4">Apparence</h2>
       <p className="text-sm text-dark-muted mb-4">Choisissez votre thème préféré.</p>
-      <div className="grid grid-cols-2 gap-3">
-        {[
-          { dark: false, icon: Sun, label: 'Clair' },
-          { dark: true, icon: Moon, label: 'Sombre' },
-        ].map(({ dark, icon: Icon, label }) => (
+      <div className="grid grid-cols-3 gap-3">
+        {[['light', 'Clair'], ['dark', 'Sombre'], ['auto', 'Auto']].map(([v, label]) => (
           <button
-            key={label}
-            onClick={() => toggle(dark)}
-            className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-3
-              ${isDark === dark ? 'border-primary bg-primary/10' : 'border-dark-border hover:border-dark-variant'}`}
+            key={v}
+            onClick={() => setMode(v)}
+            className={`px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${mode === v ? 'border-primary bg-primary/10 text-primary' : 'border-dark-border hover:bg-dark-variant'
+              }`}
           >
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${dark ? 'bg-dark-variant' : 'bg-light-variant'}`}>
-              <Icon size={24} className={dark ? 'text-white' : 'text-dark-bg'} />
-            </div>
-            <span className="text-sm font-medium">{label}</span>
-            {isDark === dark && <span className="text-xs text-primary font-medium">Actif</span>}
+            {label}
           </button>
         ))}
       </div>

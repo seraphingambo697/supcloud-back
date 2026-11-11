@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root,
+[data-theme='dark'] {
+    --c-bg: 13 13 15;
+    --c-surface: 28 28 30;
+    --c-variant: 44 44 46;
+    --c-border: 58 58 60;
+    --c-text: 235 235 245;
+    --c-muted: 142 142 147;
+    color-scheme: dark;
+}
+
+[data-theme='light'] {
+    --c-bg: 242 242 247;
+    --c-surface: 255 255 255;
+    --c-variant: 229 229 234;
+    --c-border: 209 209 214;
+    --c-text: 28 28 30;
+    --c-muted: 108 108 112;
+    color-scheme: light;
+}
+
 @layer base {
     * {
         box-sizing: border-box;

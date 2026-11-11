@@ -10,21 +10,21 @@ export default {
         warning: '#FF9F0A',
         danger: '#FF453A',
         dark: {
-          bg: '#0D0D0F',
-          surface: '#1C1C1E',
-          variant: '#2C2C2E',
-          border: '#3A3A3C',
-          text: '#EBEBF5',
-          muted: '#8E8E93',
+          bg: 'rgb(var(--c-bg) / <alpha-value>)',
+          surface: 'rgb(var(--c-surface) / <alpha-value>)',
+          variant: 'rgb(var(--c-variant) / <alpha-value>)',
+          border: 'rgb(var(--c-border) / <alpha-value>)',
+          text: 'rgb(var(--c-text) / <alpha-value>)',
+          muted: 'rgb(var(--c-muted) / <alpha-value>)',
         },
-        light: {
+        /*light: {
           bg: '#F2F2F7',
           surface: '#FFFFFF',
           variant: '#E5E5EA',
           border: '#D1D1D6',
           text: '#1C1C1E',
           muted: '#6C6C70',
-        },
+        },*/
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

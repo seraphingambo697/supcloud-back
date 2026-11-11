@@ -17,46 +17,49 @@ import SharesPage from './pages/SharesPage'
 import SettingsPage from './pages/SettingsPage'
 import PublicSharePage from './pages/PublicSharePage'
 import OAuthCallbackPage from './pages/OAuthCallbackPage';
+import { ThemeProvider } from './contexts/ThemeContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
-          <Route path="/share/:token" element={<PublicSharePage />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+            <Route path="/share/:token" element={<PublicSharePage />} />
 
-          <Route element={<AppLayout />}>
-            {/* Dashboard */}
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/files" element={<FilesPage />} />
-            <Route path="/trash" element={<TrashPage />} />
+            <Route element={<AppLayout />}>
+              {/* Dashboard */}
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/files" element={<FilesPage />} />
+              <Route path="/trash" element={<TrashPage />} />
 
-            <Route path="/shares" element={<SharesPage />} />
-          </Route>
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/shares" element={<SharesPage />} />
+            </Route>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
 
-        </Routes>
-      </BrowserRouter>
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          style: {
-            background: '#1C1C1E',
-            color: '#EBEBF5',
-            border: '1px solid #2C2C2E',
-            borderRadius: '12px',
-            fontSize: '14px',
-          },
-          success: { iconTheme: { primary: '#30D158', secondary: '#1C1C1E' } },
-          error: { iconTheme: { primary: '#FF453A', secondary: '#1C1C1E' } },
-        }}
-      />
-    </AuthProvider>
+          </Routes>
+        </BrowserRouter>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: '#1C1C1E',
+              color: '#EBEBF5',
+              border: '1px solid #2C2C2E',
+              borderRadius: '12px',
+              fontSize: '14px',
+            },
+            success: { iconTheme: { primary: '#30D158', secondary: '#1C1C1E' } },
+            error: { iconTheme: { primary: '#FF453A', secondary: '#1C1C1E' } },
+          }}
+        />
+      </AuthProvider>
+    </ThemeProvider>
   </React.StrictMode>
 )

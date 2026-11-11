@@ -1,13 +1,17 @@
 import secrets
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import and_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.models.models import FileItem, ShareLink, SharedFolder, User
 
-
+def _naive_utc(dt: datetime | None) -> datetime | None:
+    """Convertit une date avec fuseau en date UTC """
+    if dt is not None and dt.tzinfo is not None:
+        return dt.astimezone(timezone.utc).replace(tzinfo=None)
+    return dt
 class ShareRepository:
 
     def __init__(self, db: AsyncSession):
@@ -45,7 +49,7 @@ class ShareRepository:
             token=token,
             file_item_id=file_item_id,
             created_by=created_by,
-            expires_at=expires_at,
+            expires_at=_naive_utc(expires_at),
             password_hash=password_hash,
         )
         self.db.add(link)

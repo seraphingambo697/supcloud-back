@@ -140,6 +140,18 @@ services:
     ports:
       - "8000:8000"
 
+  frontend:
+    build:
+      context: ./supcloud-web
+      args:
+        VITE_GATEWAY_URL: http://localhost:8000
+    container_name: supcloud_frontend
+    restart: unless-stopped
+    depends_on:
+      - gateway
+    ports:
+      - "3000:80"
+
 volumes:
   db_data:
     driver: local

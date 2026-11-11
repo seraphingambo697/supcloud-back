@@ -67,7 +67,7 @@ async def oauth_google_redirect():
     return RedirectResponse(url=google_auth_url())
 
 
-@router.get(
+"""@router.get(
     "/oauth/google/callback",
     response_model=TokenResponse,
     summary="Callback Google OAuth2",
@@ -84,8 +84,33 @@ async def oauth_google_callback(
         name=profile["name"],
         avatar_url=profile.get("avatar_url"),
     )
-    return TokenResponse(access_token=token, user=UserOut.model_validate(user))
+    return TokenResponse(access_token=token, user=UserOut.model_validate(user))"""
 
+@router.get(
+    "/oauth/google/callback",
+    summary="Callback Google OAuth2",
+)
+async def oauth_google_callback(
+    code: str,
+    svc: AuthService = Depends(_svc),
+):
+    from fastapi.responses import RedirectResponse
+    from shared.config import get_settings
+
+    front = get_settings().frontend_url
+    try:
+        profile = await google_callback(code)
+        user, token = await svc.login_or_create_oauth(
+            provider="google",
+            sub=profile["sub"],
+            email=profile["email"],
+            name=profile["name"],
+            avatar_url=profile.get("avatar_url"),
+        )
+    except Exception:
+        return RedirectResponse(url=f"{front}/login?error=google")
+
+    return RedirectResponse(url=f"{front}/oauth/callback#token={token}")
 
 
 @router.get(

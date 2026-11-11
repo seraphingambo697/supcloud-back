@@ -30,4 +30,7 @@ aiofiles==23.2.1
 # Utilitaires
 python-dotenv==1.0.1
 uuid==1.30
-Pillow==10.3.0                     
+Pillow==10.3.0         
+
+google-auth==2.35.0
+requests==2.32.3
